@@ -3,6 +3,10 @@ package net.yeticraft.squatingyeti.SquatchPVP;
 import java.util.HashMap;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.entity.Player;
+
+import ru.tehkode.permissions.PermissionManager;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 import net.yeticraft.squatingyeti.YetiSquat.*;
 
 public class Ratio implements Comparable<Ratio> {
@@ -121,6 +125,8 @@ public class Ratio implements Comparable<Ratio> {
     } */
     
     public static boolean sneakCheck(Player player) {
+    	PermissionManager pexPlayer = PermissionsEx.getPermissionManager();
+		PermissionUser pPlayer = pexPlayer.getUser(player);
     	long sneakTime = 90000;
     	if (!sneakList.containsKey(player.getName())){
     		sneakList.put(player.getName(),System.currentTimeMillis());
@@ -128,7 +134,7 @@ public class Ratio implements Comparable<Ratio> {
     	}
     	
     	if (player.isSneaking() && System.currentTimeMillis() - sneakList.get(player.getName()) > sneakTime) {
-    		permission.playerRemove(player, "squatchpvp.sneak");
+    		pPlayer.removePermission("squatchpvp.sneak");
     		sneakList.remove(player.getName());
     		return false;
     	}
@@ -136,12 +142,11 @@ public class Ratio implements Comparable<Ratio> {
    }
     public static void sneakHide(Player player) {
     	if (!(sneakCheck(player) == true)) {
-    		squat.stand(player);
-    	}
-    	if (!player.isSneaking()) {
-    		squat.stand(player);
+    		squat.updateSquatState(player);
+    		return;
     	}
     		squat.squat(player);
+    		player.sendMessage("now sneaking");
     	}
     
     public void resetCombat() {

@@ -11,6 +11,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import ru.tehkode.permissions.PermissionManager;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 public class SquatchCommands implements CommandExecutor {
 	public static int sneakTimeOut;
 	public static Permission permission;
@@ -34,7 +38,8 @@ public class SquatchCommands implements CommandExecutor {
 	            return true;
 	        
 	        Player player = (Player)sender;
-
+	        PermissionManager pexPlayer = PermissionsEx.getPermissionManager();
+			PermissionUser pPlayer = pexPlayer.getUser(player);
 	        //Display the help page if the Player did not add any arguments
 	        if (args.length == 0) {
 	            sendHelp(player);
@@ -91,9 +96,9 @@ public class SquatchCommands implements CommandExecutor {
 	            			return true;
 	            		}
 	            		else if (Econ.takeMoney(pName, sneakFee) == true) {
-	            			permission.playerAdd(player, "squatchpvp.sneak");
-	            			Ratio.sneakHide(player);
-	            			
+	            			player.sendMessage("player is" + player);
+	            			pPlayer.addPermission("squatchpvp.sneak");
+	            			return true;
 	            		}
 	            case TOP:
 	                switch (args.length) {

@@ -108,7 +108,7 @@ public class SquatchPVP extends JavaPlugin {
 				}
 			}
 			
-			SquatchPVPListener.disableFeeForPVP = Boolean.parseBoolean(loadValue("DisableFeeForPVP"));
+			//SquatchPVPListener.disableFeeForPVP = Boolean.parseBoolean(loadValue("DisableFeeForPVP"));
 			Ratio.sneakTimeOut = Integer.parseInt(loadValue("SneakTime")) * 1000;
 			
 			spiritName = loadValue("SpiritName");
@@ -125,7 +125,7 @@ public class SquatchPVP extends JavaPlugin {
 			Payer.lo = Integer.parseInt(loadValue("Low"));
 			
 			Payer.threshold = Integer.parseInt(loadValue("SpiritThreshold"));
-			Payer.modifier = Integer.parseInt(loadValue("SpiritModifier")) / 100;
+			Payer.modifier = Integer.parseInt(loadValue("HunterModifier")) / 100;
 			Payer.max = Integer.parseInt(loadValue("ModifierMax")) / 100;
 			Payer.whole = Boolean.parseBoolean(loadValue("WholeNumbers"));
 			

@@ -2,7 +2,7 @@ package net.yeticraft.squatingyeti.SquatchPVP;
 
 import java.util.HashSet;
 import java.util.Set;
-
+import net.yeticraft.squatingyeti.YetiSquat.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 public class SquatchPVPListener implements Listener {
 	public static boolean disableFeeForPVP;
-	
+	public static YetiSquat squat;
 	
 	@EventHandler (priority = EventPriority.MONITOR)
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
@@ -63,11 +63,14 @@ public class SquatchPVPListener implements Listener {
 		public void onPlayerMoveEvent(PlayerMoveEvent event) {
 		
 		Player player = event.getPlayer();
-		if (!(player.isSneaking()))
+		if (!(player.isSneaking())) {
 			return;
+		}
 		if (!(player.hasPermission("squatchpvp.sneak")))
 			return;
-		Ratio.sneakHide(player);
+		if (player.isSneaking());
+			Ratio.sneakHide(player);
+			return;
 	}
 	
 }
