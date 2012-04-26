@@ -59,8 +59,8 @@ public class SquatchPVP extends JavaPlugin {
 		
 		pm.registerEvents(new SquatchPVPListener(), this);
 		
-		SquatchPVPCommand.command = (String)this.getDescription().getCommands().keySet().toArray()[0];
-        getCommand(SquatchPVPCommand.command).setExecutor(new SquatchPVPCommand());
+		SquatchCommands.command = (String)this.getDescription().getCommands().keySet().toArray()[0];
+        getCommand(SquatchCommands.command).setExecutor(new SquatchCommands());
 		
 		log.info("[SquatchPVP] is enabled");
 		
@@ -88,7 +88,7 @@ public class SquatchPVP extends JavaPlugin {
 			SquatchPVPMessages.setSpiritDecreasedMsg(loadValue("SpiritDecreased"));
 			SquatchPVPMessages.setSpiritIncreasedMsg(loadValue("SpiritIncreased"));
 			SquatchPVPMessages.setSpiritNoChangeMsg(loadValue("SpiritNoChange"));
-			SquatchPVPMessages.setSneakMsg(loadValue("SneakMessage"));
+			//SquatchPVPMessages.setSneakMsg(loadValue("SneakMessage"));
 			
 			String feeType = loadValue("DeathFeeType");
 			if (feeType.equalsIgnoreCase("none")) {
@@ -109,6 +109,7 @@ public class SquatchPVP extends JavaPlugin {
 			}
 			
 			SquatchPVPListener.disableFeeForPVP = Boolean.parseBoolean(loadValue("DisableFeeForPVP"));
+			Ratio.sneakTimeOut = Integer.parseInt(loadValue("SneakTime")) * 1000;
 			
 			spiritName = loadValue("SpiritName");
 			hunterName = loadValue("HunterName");

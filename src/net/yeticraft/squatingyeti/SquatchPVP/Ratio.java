@@ -1,12 +1,18 @@
 package net.yeticraft.squatingyeti.SquatchPVP;
 
+import java.util.HashMap;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.entity.Player;
+import net.yeticraft.squatingyeti.YetiSquat.*;
 
-public class Ratio {
+public class Ratio implements Comparable<Ratio> {
 	
+	public static Permission permission;
+	public static YetiSquat squat;
 	public static int hunterLevel;
 	public static String hunterGroup;
 	public String name;
+	public static int sneakTimeOut;
 	public int kills = 0;
     public int deaths = 0;
     public double kdr = 0;
@@ -16,6 +22,7 @@ public class Ratio {
     private int instance = 0;
     public String group;
     public static boolean removeGroup;
+    static HashMap<String, Long> sneakList = new HashMap<String, Long>();
     
     public Ratio(String name) {
     	this.name = name;
@@ -42,7 +49,7 @@ public class Ratio {
     }
     
     private void calculateKDR() {
-    	kdr = deaths == 0 ? kills : (double)kills /deaths;
+    	kdr = (double)kills / (deaths == 0 ? 1: deaths);
     	
     	long tmp = (long)(kdr * 100);
     	kdr = (double)tmp /100;
@@ -113,11 +120,36 @@ public class Ratio {
     	}
     } */
     
+    public static boolean sneakCheck(Player player) {
+    	long sneakTime = 90000;
+    	if (!sneakList.containsKey(player.getName())){
+    		sneakList.put(player.getName(),System.currentTimeMillis());
+    		return true;
+    	}
+    	
+    	if (player.isSneaking() && System.currentTimeMillis() - sneakList.get(player.getName()) > sneakTime) {
+    		permission.playerRemove(player, "squatchpvp.sneak");
+    		sneakList.remove(player.getName());
+    		return false;
+    	}
+		return false;
+   }
+    public static void sneakHide(Player player) {
+    	if (!(sneakCheck(player) == true)) {
+    		squat.stand(player);
+    	}
+    	if (!player.isSneaking()) {
+    		squat.stand(player);
+    	}
+    		squat.squat(player);
+    	}
+    
     public void resetCombat() {
     	inCombat = false;
     	inCombatWith = null;
     }
     
+    @Override
     public int compareTo(Ratio rat) {
     	if (kdr < rat.kdr)
     		return 1;
