@@ -1,8 +1,8 @@
 package net.yeticraft.squatingyeti.SquatchPVP;
 
-import java.util.HashSet;
-import java.util.Set;
-import net.yeticraft.squatingyeti.YetiSquat.*;
+import java.util.LinkedList;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -15,7 +15,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 public class SquatchPVPListener implements Listener {
 	public static boolean disableFeeForPVP;
-	public static YetiSquat squat;
+	public static LinkedList<String> feeDisabledIn;
+
 	
 	@EventHandler (priority = EventPriority.MONITOR)
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
@@ -37,7 +38,7 @@ public class SquatchPVPListener implements Listener {
 			return;
 		
 		Ratio ratio = SquatchPVP.getRatio(((Player)wounded).getName());
-		//ratio.startCombat(((Player)attacker).getName());
+		ratio.startCombat(((Player)attacker).getName());
 	}
 	
 	@EventHandler (priority = EventPriority.MONITOR)
@@ -57,20 +58,45 @@ public class SquatchPVPListener implements Listener {
 		
 		if (!disableFeeForPVP)
 			Payer.dropMoney(victim);
+		
+		if (!feeDisabledIn.contains(victim.getWorld().getName()))
+			Payer.rewardPVP(victim, ratio);
 	}
 	
-	@EventHandler (priority = EventPriority.MONITOR) 
+	@EventHandler (priority = EventPriority.LOW) 
 		public void onPlayerMoveEvent(PlayerMoveEvent event) {
 		
 		Player player = event.getPlayer();
-		if (!(player.isSneaking())) {
-			return;
+		if (!(player.isSneaking())){ 
+			for (Player other : Bukkit.getServer().getOnlinePlayers()) {
+				if (!other.equals(player) && !other.canSee(player)) {
+					other.showPlayer(player);
+					return;
+				}
+			}
 		}
+		
 		if (!(player.hasPermission("squatchpvp.sneak")))
 			return;
-		if (player.isSneaking());
-			Ratio.sneakHide(player);
-			return;
+		if (player.isSneaking()) {
+			if (Ratio.sneakCheck(player) == true) {
+				player.hidePlayer(player);
+				for (Player other : Bukkit.getServer().getOnlinePlayers()) {
+				if (!other.equals(player) && other.canSee(player)) {
+	            	other.hidePlayer(player);
+	            	return;
+					}
+				}
+					
+				if (Ratio.sneakCheck(player) == false) {
+					for (Player other : Bukkit.getServer().getOnlinePlayers()) {
+						if (!other.equals(player) && !other.canSee(player)) {
+							other.showPlayer(player);
+							return;
+						}
+					}
+				}
+			}
+		}
 	}
-	
 }

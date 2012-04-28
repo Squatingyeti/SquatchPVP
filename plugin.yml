@@ -18,7 +18,7 @@ permissions:
     description: Needed to have money stolen from you
   squatchpvp.ignoredeathfee:
     default: op
-    description: Do not pay Death Toll when you die
+    description: Do not pay Death fee when you die
   squatchpvp.sneak:
     default: false
     description: Allows the player to sneak for a fee

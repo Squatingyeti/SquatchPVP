@@ -1,5 +1,6 @@
 package net.yeticraft.squatingyeti.SquatchPVP;
 
+import java.util.LinkedList;
 import java.util.Random;
 
 import org.bukkit.entity.Player;
@@ -26,6 +27,7 @@ public class Payer {
     public static int hi;
     public static int lo;
     public static boolean whole;
+    public static LinkedList<String> feeDisabledIn;
     
 
     public static void dropMoney(Player victim) {
@@ -34,8 +36,8 @@ public class Payer {
             return;
         
         //Cancel if the fee is disabled in this World
-       // if (feeDisabledIn.contains(victim.getWorld().getName()))
-         //   return;
+         if (feeDisabledIn.contains(victim.getWorld().getName()))
+        	 return;
 
         //Cancel if the Player is allowed to ignore the fee
         if (SquatchPVP.hasPermission(victim, "ignoredeathfee"))
@@ -58,7 +60,7 @@ public class Payer {
     }
 
 
-    public static void rewardPvP(Player victim, Ratio victimRatio) {
+    public static void rewardPVP(Player victim, Ratio victimRatio) {
         //Find the Player that killed the victim Player
         Player killer = SquatchPVP.server.getPlayer(victimRatio.inCombatWith);
         

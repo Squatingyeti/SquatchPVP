@@ -98,7 +98,7 @@ public class SquatchPVP extends JavaPlugin {
 			else {
 				SquatchPVPMessages.setDeathFeeMsg(loadValue("DeathFeeMessage"));
 				Payer.feeAmount = Double.parseDouble(loadValue("DeathFee"));
-				SquatchPVPListener.disableFeeForPVP = Boolean.parseBoolean(loadValue("DisableFeeForPVP"));
+				SquatchPVPListener.disableFeeForPVP = Boolean.parseBoolean(loadValue("DisableFeeForPvP"));
 				
 				if (feeType.equalsIgnoreCase("percent"))
 					Payer.feeAsPercent = true;
@@ -108,9 +108,11 @@ public class SquatchPVP extends JavaPlugin {
 				}
 			}
 			
-			//SquatchPVPListener.disableFeeForPVP = Boolean.parseBoolean(loadValue("DisableFeeForPVP"));
-			Ratio.sneakTimeOut = Integer.parseInt(loadValue("SneakTime")) * 1000;
+			SquatchPVPListener.disableFeeForPVP = Boolean.parseBoolean(loadValue("DisableFeeForPvP"));
+			Ratio.sneakTimeOut = Long.parseLong(loadValue("SneakTime")) * 1000;
 			
+			Ratio.combatTimeOut = Integer.parseInt(loadValue("CombatTime")) * 1000;
+			Ratio.hunterTag = SquatchPVPMessages.format(loadValue("HunterTag"));
 			spiritName = loadValue("SpiritName");
 			hunterName = loadValue("HunterName");
 			cooldownTime = Integer.parseInt(loadValue("CooldownTime")) * 20;
@@ -130,6 +132,11 @@ public class SquatchPVP extends JavaPlugin {
 			Payer.whole = Boolean.parseBoolean(loadValue("WholeNumbers"));
 			
 			negative = Boolean.parseBoolean(loadValue("Negative"));
+			
+			Payer.feeDisabledIn = new LinkedList<String>
+				(Arrays.asList(loadValue("DisableDeathFeeInWorlds").split(", ")));
+			SquatchPVPListener.feeDisabledIn = new LinkedList<String>
+				(Arrays.asList(loadValue("DisablePayInWorlds").split(", ")));
 			
 			Ratio.hunterGroup = loadValue("HunterGroup");
 			Ratio.removeGroup = Boolean.parseBoolean(loadValue("RemoveFromCurrentGroup"));

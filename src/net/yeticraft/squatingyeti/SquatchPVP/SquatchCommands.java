@@ -89,16 +89,18 @@ public class SquatchCommands implements CommandExecutor {
 	            
 	            case SNEAK:
 	            	String pName = player.getName();
-	            	double sneakFee = 150;
+	            	double sneakFee = 75;
 	            	if (args.length == 1)
 	            		if (Econ.takeMoney(pName, sneakFee) == false) {
 	            			player.sendMessage("You do not have enough TPs to sneak");
 	            			return true;
 	            		}
 	            		else if (Econ.takeMoney(pName, sneakFee) == true) {
-	            			player.sendMessage("player is" + player);
+	            			player.sendMessage("player is" + pName);
+	            			player.sendMessage(+ sneakFee + " removed from your account");
 	            			pPlayer.addPermission("squatchpvp.sneak");
 	            			return true;
+	            			
 	            		}
 	            case TOP:
 	                switch (args.length) {
@@ -152,7 +154,7 @@ public class SquatchCommands implements CommandExecutor {
 	    }
 	    
 	    /**
-	* Displays the current Outlaws
+	* Displays the current Hunters
 	*
 	* @param player The Player executing the command
 	*/

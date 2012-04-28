@@ -14,9 +14,11 @@ public class Ratio implements Comparable<Ratio> {
 	public static Permission permission;
 	public static YetiSquat squat;
 	public static int hunterLevel;
+	public static int combatTimeOut;
 	public static String hunterGroup;
+	public static String hunterTag;
 	public String name;
-	public static int sneakTimeOut;
+	public static long sneakTimeOut;
 	public int kills = 0;
     public int deaths = 0;
     public double kdr = 0;
@@ -77,6 +79,8 @@ public class Ratio implements Comparable<Ratio> {
     		
     		SquatchPVP.permission.playerAddGroup(player, hunterGroup);
     	}
+    	if (!hunterTag.isEmpty())
+    		player.setDisplayName(hunterTag + name);
     	return true;
     }
     
@@ -106,7 +110,7 @@ public class Ratio implements Comparable<Ratio> {
     public boolean isHunter() {
     	return spirit > hunterLevel;
     }
-    /*
+    
     public void startCombat(String player) {
     	instance++;
     	final int THIS_INSTANCE = instance;
@@ -119,40 +123,39 @@ public class Ratio implements Comparable<Ratio> {
     			try {
     				
     				Thread.currentThread().sleep(combatTimeOut);
+    				if (instance == THIS_INSTANCE)
+                        resetCombat();
+    			}
+    			catch (Exception e) {
     			}
     		}
-    	}
-    } */
-    
-    public static boolean sneakCheck(Player player) {
-    	PermissionManager pexPlayer = PermissionsEx.getPermissionManager();
-		PermissionUser pPlayer = pexPlayer.getUser(player);
-    	long sneakTime = 90000;
-    	if (!sneakList.containsKey(player.getName())){
-    		sneakList.put(player.getName(),System.currentTimeMillis());
-    		return true;
-    	}
-    	
-    	if (player.isSneaking() && System.currentTimeMillis() - sneakList.get(player.getName()) > sneakTime) {
-    		pPlayer.removePermission("squatchpvp.sneak");
-    		sneakList.remove(player.getName());
-    		return false;
-    	}
-		return false;
-   }
-    public static void sneakHide(Player player) {
-    	if (!(sneakCheck(player) == true)) {
-    		squat.updateSquatState(player);
-    		return;
-    	}
-    		squat.squat(player);
-    		player.sendMessage("now sneaking");
-    	}
-    
+    	};
+    	combat.start();
+    } 
+
     public void resetCombat() {
     	inCombat = false;
     	inCombatWith = null;
     }
+    
+    public static boolean sneakCheck(Player player) {
+    	PermissionManager pexPlayer = PermissionsEx.getPermissionManager();
+		PermissionUser pPlayer = pexPlayer.getUser(player);
+    	//long sneakTime = 90000;
+    	if (!sneakList.containsKey(player.getName())) {
+    		sneakList.put(player.getName(),System.currentTimeMillis());
+    		return true;
+    	}
+    	if (System.currentTimeMillis() - sneakList.get(player.getName()) > sneakTimeOut) {
+    		pPlayer.removePermission("squatchpvp.sneak");
+    		sneakList.remove(player.getName());
+    		return false;
+    	}
+    	if (sneakList.containsKey(player.getName()))
+    		return true;
+
+		return false;
+   }
     
     @Override
     public int compareTo(Ratio rat) {
