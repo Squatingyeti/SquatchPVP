@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import net.yeticraft.squatingyeti.SquatchPVP.Payer.PayType;
 import net.milkbowl.vault.permission.Permission;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,7 +17,6 @@ import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class SquatchCommands implements CommandExecutor {
-	public static int sneakTimeOut;
 	public static Permission permission;
 	
 	 private static enum Action { HELP, HUNTERS, SPIRIT, KDR, RANK, SNEAK, TOP, RESET }
@@ -90,7 +90,7 @@ public class SquatchCommands implements CommandExecutor {
 	            case SNEAK:
 	            	String pName = player.getName();
 	            	double sneakFee = 75;
-	            	if (args.length == 1)
+	            	if (args.length == 1) {
 	            		if (Econ.takeMoney(pName, sneakFee) == false) {
 	            			player.sendMessage("You do not have enough TPs to sneak");
 	            			return true;
@@ -99,9 +99,14 @@ public class SquatchCommands implements CommandExecutor {
 	            			player.sendMessage("player is" + pName);
 	            			player.sendMessage(+ sneakFee + " removed from your account");
 	            			pPlayer.addPermission("squatchpvp.sneak");
+	            			Ratio.sneakList.remove(player.getName());
+	            			player.sendMessage(ChatColor.GREEN + "sneak permission added");
 	            			return true;
 	            			
 	            		}
+	            		
+	            	}
+	            	
 	            case TOP:
 	                switch (args.length) {
 	                    case 1: top(player, 5); return true;

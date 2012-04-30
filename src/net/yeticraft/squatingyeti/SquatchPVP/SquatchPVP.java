@@ -26,7 +26,7 @@ public class SquatchPVP extends JavaPlugin {
 	public static Properties p;
 	public static HashMap<String, Ratio> ratios = new HashMap<String, Ratio>();
 	public static String dataFolder;
-	
+
 	
 	public void onDisable() {
 		log.info("[SquatchPVP] has been disabled");
@@ -34,6 +34,7 @@ public class SquatchPVP extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
+  
 		server = getServer();
 		pm = server.getPluginManager();
 		
@@ -44,6 +45,7 @@ public class SquatchPVP extends JavaPlugin {
 		dataFolder = dir.getPath();
 		
 		loadSettings();
+		
 		
 		RegisteredServiceProvider<Permission> permissionProvider = 
 				getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
@@ -61,7 +63,7 @@ public class SquatchPVP extends JavaPlugin {
 		
 		SquatchCommands.command = (String)this.getDescription().getCommands().keySet().toArray()[0];
         getCommand(SquatchCommands.command).setExecutor(new SquatchCommands());
-		
+
 		log.info("[SquatchPVP] is enabled");
 		
 		if (cooldownTime != 0)

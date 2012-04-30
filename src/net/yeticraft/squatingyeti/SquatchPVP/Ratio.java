@@ -1,18 +1,20 @@
 package net.yeticraft.squatingyeti.SquatchPVP;
 
 import java.util.HashMap;
+
 import net.milkbowl.vault.permission.Permission;
+import net.yeticraft.squatingyeti.SquatchPVP.SquatchPVPListener;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
-import net.yeticraft.squatingyeti.YetiSquat.*;
+
 
 public class Ratio implements Comparable<Ratio> {
 	
 	public static Permission permission;
-	public static YetiSquat squat;
 	public static int hunterLevel;
 	public static int combatTimeOut;
 	public static String hunterGroup;
@@ -137,25 +139,34 @@ public class Ratio implements Comparable<Ratio> {
     	inCombat = false;
     	inCombatWith = null;
     }
-    
     public static boolean sneakCheck(Player player) {
     	PermissionManager pexPlayer = PermissionsEx.getPermissionManager();
 		PermissionUser pPlayer = pexPlayer.getUser(player);
-    	//long sneakTime = 90000;
+		if (!player.hasPermission("squatchPVP.sneak")) {
+			sneakList.remove(player.getName());
+			player.sendMessage(ChatColor.AQUA + "sneakList removed at top");
+			return false;
+		} 
     	if (!sneakList.containsKey(player.getName())) {
-    		sneakList.put(player.getName(),System.currentTimeMillis());
+    		sneakList.put(player.getName(), System.currentTimeMillis());
+    		player.sendMessage(ChatColor.YELLOW + "You were added to sneakList");
     		return true;
     	}
+
     	if (System.currentTimeMillis() - sneakList.get(player.getName()) > sneakTimeOut) {
     		pPlayer.removePermission("squatchpvp.sneak");
+    		player.sendMessage(ChatColor.RED + "Sneak permission removed");
     		sneakList.remove(player.getName());
+    		player.sendMessage(ChatColor.YELLOW + "You were removed from sneakList");
     		return false;
     	}
-    	if (sneakList.containsKey(player.getName()))
+    	if (sneakList.containsKey(player.getName())){
+    		player.sendMessage(ChatColor.YELLOW + "sneakList already contains your name");
     		return true;
+    	}
+    	return true;
+    }
 
-		return false;
-   }
     
     @Override
     public int compareTo(Ratio rat) {
