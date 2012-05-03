@@ -2,12 +2,15 @@ package net.yeticraft.squatingyeti.SquatchPVP;
 
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -87,18 +90,13 @@ public class SquatchPVPListener implements Listener {
 			player.sendMessage(ChatColor.YELLOW + "you are in the hidden hash, but not sneaking");
 			show(player);
 			return;
-			/*for (Player other : Bukkit.getServer().getOnlinePlayers()) {
-				if (!other.equals(player) && !other.canSee(player)) {
-					other.showPlayer(player);
-					return;
-				}
-			} */
+			
 		}
 		if (player.isSneaking()) {
 			if (Ratio.sneakCheck(player) == true && (hidden.contains(player.getName().toLowerCase()))) {
 				player.sendMessage(ChatColor.GREEN + "sneakCheck true & already hidden hash");
 				hide(player);
-				distCheck(player);
+				//distCheck(player);
 				return;
 			}
 			
@@ -107,13 +105,9 @@ public class SquatchPVPListener implements Listener {
 				player.sendMessage(ChatColor.GREEN + "added to hidden hash");
 				player.sendMessage(ChatColor.YELLOW + "sneakCheck returned true");
 				hide(player);
-				distCheck(player);
+				//distCheck(player);
 				return;
-				/*for (Player other : Bukkit.getServer().getOnlinePlayers()) {
-				if (!other.equals(player) && other.canSee(player)) {
-	            	other.hidePlayer(player);
-	            	return;
-					} */
+				
 				}
 
 			
@@ -123,12 +117,7 @@ public class SquatchPVPListener implements Listener {
 					player.sendMessage(ChatColor.RED + "sneakCheck returned false");
 					show(player);
 					return;
-					/*for (Player other : Bukkit.getServer().getOnlinePlayers()) {
-						if (!other.equals(player) && !other.canSee(player)) {
-							other.showPlayer(player);
-							return;
-						}
-					} */
+					
 				}
 				else {
 					player.sendMessage(ChatColor.YELLOW + "already in hidden hash and sneaking");
@@ -143,7 +132,7 @@ public class SquatchPVPListener implements Listener {
 			if (!other.equals(player) && !other.canSee(player)) {
 				other.showPlayer(player);
 				player.sendMessage(ChatColor.YELLOW + "You were shown by the show method");
-				return;
+				
 			}
 		}
 	}
@@ -152,16 +141,32 @@ public class SquatchPVPListener implements Listener {
 		for (Player other : Bukkit.getServer().getOnlinePlayers()) {
 			if (!other.equals(player) && other.canSee(player)) {
             	other.hidePlayer(player);
-            	double dist = other.getLocation().distance(player.getLocation());
-            	if (dist <= 7) 
-            		show(player);
             	player.sendMessage(ChatColor.YELLOW + "You were hidden by the hide method");
-            	return;
 			}
+            	if (other.getLocation().distance(player.getLocation()) < 7) {
+            		show(player);
+            		player.sendMessage(ChatColor.YELLOW + "Distance too close...no longer hidden");
+            	/*List<Entity> entities = player.getNearbyEntities(10, 10, 10);
+            	for(Object entity: entities) {
+            		if (entity instanceof LivingEntity) {
+            			
+            			if (entity instanceof Player) {
+            				Player oPlayer = (Player)entity;
+            				double dist = other.getLocation().distance(player.getLocation());
+            			}
+            	} */
+            	
+            	//distCheck(player);
+            	
+			}
+            	else {
+            		other.hidePlayer(player);
+            		player.sendMessage("hidden by else");
+            	}
 		}
 	}
 	
-	 public void updateHideState(Player player){
+	/* public void updateHideState(Player player){
 	        String playerName = player.getName();
 	        Server server = Bukkit.getServer();
 	        if (hidden.contains(playerName.toLowerCase())){
@@ -173,14 +178,16 @@ public class SquatchPVPListener implements Listener {
 	                if (!looking.canSee(player)) looking.showPlayer(player);
            }
        }
-	}
-	public void distCheck(Player player) {
+	} */
+	/*public void distCheck(Player player) {
 		for (Player other : Bukkit.getServer().getOnlinePlayers()) {
-			double dist = other.getLocation().distance(player.getLocation());
-        	if (dist <= 7) 
+			if (other.getLocation().distance(player.getLocation()) <= 7) {
         		show(player);
         	player.sendMessage(ChatColor.YELLOW + "Distance too close...no longer hidden");
-        	return;
+        	}
+        	else {
+        	}
 		}
-	}
+		return;
+	} */
 }
