@@ -99,7 +99,6 @@ public class SquatchCommands implements CommandExecutor {
 	            			player.sendMessage("player is" + pName);
 	            			player.sendMessage(+ sneakFee + " removed from your account");
 	            			pPlayer.addPermission("squatchpvp.sneak");
-	            			Ratio.sneakList.remove(player.getName());
 	            			player.sendMessage(ChatColor.GREEN + "sneak permission added");
 	            			return true;
 	            			

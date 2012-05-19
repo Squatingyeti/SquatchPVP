@@ -111,7 +111,7 @@ public class SquatchPVP extends JavaPlugin {
 			}
 			
 			SquatchPVPListener.disableFeeForPVP = Boolean.parseBoolean(loadValue("DisableFeeForPvP"));
-			Ratio.sneakTimeOut = Long.parseLong(loadValue("SneakTime")) * 1000;
+			SquatchPVPListener.sneakTimeOut = Long.parseLong(loadValue("SneakTime")) * 1000;
 			
 			Ratio.combatTimeOut = Integer.parseInt(loadValue("CombatTime")) * 1000;
 			Ratio.hunterTag = SquatchPVPMessages.format(loadValue("HunterTag"));

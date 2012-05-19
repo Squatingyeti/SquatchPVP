@@ -1,15 +1,7 @@
 package net.yeticraft.squatingyeti.SquatchPVP;
 
-import java.util.HashMap;
-
 import net.milkbowl.vault.permission.Permission;
-import net.yeticraft.squatingyeti.SquatchPVP.SquatchPVPListener;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-
-import ru.tehkode.permissions.PermissionManager;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 
 public class Ratio implements Comparable<Ratio> {
@@ -20,7 +12,6 @@ public class Ratio implements Comparable<Ratio> {
 	public static String hunterGroup;
 	public static String hunterTag;
 	public String name;
-	public static long sneakTimeOut;
 	public int kills = 0;
     public int deaths = 0;
     public double kdr = 0;
@@ -30,7 +21,7 @@ public class Ratio implements Comparable<Ratio> {
     private int instance = 0;
     public String group;
     public static boolean removeGroup;
-    static HashMap<String, Long> sneakList = new HashMap<String, Long>();
+   
     
     public Ratio(String name) {
     	this.name = name;
@@ -139,34 +130,7 @@ public class Ratio implements Comparable<Ratio> {
     	inCombat = false;
     	inCombatWith = null;
     }
-    public static boolean sneakCheck(Player player) {
-    	PermissionManager pexPlayer = PermissionsEx.getPermissionManager();
-		PermissionUser pPlayer = pexPlayer.getUser(player);
-		if (!player.hasPermission("squatchPVP.sneak")) {
-			sneakList.remove(player.getName());
-			player.sendMessage(ChatColor.AQUA + "sneakList removed at top");
-			return false;
-		} 
-    	if (!sneakList.containsKey(player.getName())) {
-    		sneakList.put(player.getName(), System.currentTimeMillis());
-    		player.sendMessage(ChatColor.YELLOW + "You were added to sneakList");
-    		return true;
-    	}
-
-    	if (System.currentTimeMillis() - sneakList.get(player.getName()) > sneakTimeOut) {
-    		pPlayer.removePermission("squatchpvp.sneak");
-    		player.sendMessage(ChatColor.RED + "Sneak permission removed");
-    		sneakList.remove(player.getName());
-    		player.sendMessage(ChatColor.YELLOW + "You were removed from sneakList");
-    		return false;
-    	}
-    	if (sneakList.containsKey(player.getName())){
-    		player.sendMessage(ChatColor.YELLOW + "sneakList already contains your name");
-    		return true;
-    	}
-    	return true;
-    }
-
+    
     
     @Override
     public int compareTo(Ratio rat) {

@@ -1,16 +1,10 @@
 package net.yeticraft.squatingyeti.SquatchPVP;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Server;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -20,11 +14,19 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import ru.tehkode.permissions.PermissionManager;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 
 public class SquatchPVPListener implements Listener {
 	public static boolean disableFeeForPVP;
 	public static LinkedList<String> feeDisabledIn;
-	Set<String> hidden = new HashSet<String>();
+	public static long sneakTimeOut;
+	boolean timeoutReached = false;
+	static HashMap<String, Long> sneakList = new HashMap<String, Long>();
+    
+	
     
 	
 	@EventHandler (priority = EventPriority.MONITOR)
@@ -73,121 +75,54 @@ public class SquatchPVPListener implements Listener {
 	}
 	
 	@EventHandler (priority = EventPriority.LOW) 
-		public void onPlayerMoveEvent(PlayerMoveEvent event) {
+	public void onPlayerMoveEvent(PlayerMoveEvent event) {
 		
 		Player player = event.getPlayer();
-		if (!player.hasPermission("squatchpvp.sneak") && (!hidden.contains(player.getName().toLowerCase()))) {
-			player.sendMessage(ChatColor.RED + "No permission & no hidden hash");
-			return;
+		
+		if (!player.hasPermission("squatchpvp.sneak")) return; // Player doesn't have permission
+		if (System.currentTimeMillis() - sneakList.get(player.getName()) > sneakTimeOut) { // Player has surpassed the sneakTimeout
+			PermissionManager pexPlayer = PermissionsEx.getPermissionManager();
+			PermissionUser pPlayer = pexPlayer.getUser(player);
+			pPlayer.removePermission("squatchpvp.sneak");
+			timeoutReached = true;
 		}
-		if (!player.hasPermission("squatchpvp.sneak") && (hidden.contains(player.getName().toLowerCase()))){
-			hidden.remove(player.getName().toLowerCase());
-			player.sendMessage(ChatColor.RED + "No sneak permission");
-			return;
+		if (!player.isSneaking()) return; // Player isn't sneaking
+		if (sneakList.containsKey(player.getName())) { // If player is already hidden, we will see if he/she should be shown
+			sneakState(player);
+			return; 
 		}
 		
-		if (!player.isSneaking() && (hidden.contains(player.getName().toLowerCase()))){ 
-			player.sendMessage(ChatColor.YELLOW + "you are in the hidden hash, but not sneaking");
-			show(player);
-			return;
+		//Player has permission, is sneaking, and is not in the sneakList... going to process him/her as a new user.
+		sneakList.put(player.getName(), System.currentTimeMillis());
+		timeoutReached = false;
+		
+	}
+
+	public void sneakState(Player player){
+		if(timeoutReached)sneakList.remove(player.getName());
+		
+		for (Player nearbyPlayer : Bukkit.getServer().getOnlinePlayers()) {
 			
-		}
-		if (player.isSneaking()) {
-			if (Ratio.sneakCheck(player) == true && (hidden.contains(player.getName().toLowerCase()))) {
-				player.sendMessage(ChatColor.GREEN + "sneakCheck true & already hidden hash");
-				hide(player);
-				//distCheck(player);
-				return;
+			if (nearbyPlayer.equals(player)) { // Skip 
+				continue; 
 			}
 			
-			if (Ratio.sneakCheck(player) == true && (!hidden.contains(player.getName().toLowerCase()))) {
-				hidden.add(player.getName().toLowerCase());
-				player.sendMessage(ChatColor.GREEN + "added to hidden hash");
-				player.sendMessage(ChatColor.YELLOW + "sneakCheck returned true");
-				hide(player);
-				//distCheck(player);
-				return;
-				
-				}
-
+			if (timeoutReached) {// Player has surpassed the sneak timeout.. showing his yeti bits to everyone
+				nearbyPlayer.showPlayer(player); 
+				continue;
+			}
 			
-					
-				if (Ratio.sneakCheck(player) == false) {
-					hidden.remove(player.getName().toLowerCase());
-					player.sendMessage(ChatColor.RED + "sneakCheck returned false");
-					show(player);
-					return;
-					
-				}
-				else {
-					player.sendMessage(ChatColor.YELLOW + "already in hidden hash and sneaking");
-					hide(player);
-				}
+			if (nearbyPlayer.getLocation().distance(player.getLocation()) < 7.0) { // PLayer is closer than 7 blocks
+				nearbyPlayer.showPlayer(player);
+				continue;
 			}
+			
+			// At this point the player has permission, is sneaking, is on the sneaklist, is not the 
+			// nearby player, is within the time limit, and is greater than 7 blocks away. Let's hide his hairy ass.
+			nearbyPlayer.hidePlayer(player);
+			
 		}
-
-
-	public void show(Player player) {
-		for (Player other : Bukkit.getServer().getOnlinePlayers()) {
-			if (!other.equals(player) && !other.canSee(player)) {
-				other.showPlayer(player);
-				player.sendMessage(ChatColor.YELLOW + "You were shown by the show method");
-				
-			}
-		}
+		
 	}
 	
-	public void hide(Player player) {
-		for (Player other : Bukkit.getServer().getOnlinePlayers()) {
-			if (!other.equals(player) && other.canSee(player)) {
-            	other.hidePlayer(player);
-            	player.sendMessage(ChatColor.YELLOW + "You were hidden by the hide method");
-			}
-            	if (other.getLocation().distance(player.getLocation()) < 7) {
-            		show(player);
-            		player.sendMessage(ChatColor.YELLOW + "Distance too close...no longer hidden");
-            	/*List<Entity> entities = player.getNearbyEntities(10, 10, 10);
-            	for(Object entity: entities) {
-            		if (entity instanceof LivingEntity) {
-            			
-            			if (entity instanceof Player) {
-            				Player oPlayer = (Player)entity;
-            				double dist = other.getLocation().distance(player.getLocation());
-            			}
-            	} */
-            	
-            	//distCheck(player);
-            	
-			}
-            	else {
-            		other.hidePlayer(player);
-            		player.sendMessage("hidden by else");
-            	}
-		}
-	}
-	
-	/* public void updateHideState(Player player){
-	        String playerName = player.getName();
-	        Server server = Bukkit.getServer();
-	        if (hidden.contains(playerName.toLowerCase())){
-	        	hidden.remove(player.getName().toLowerCase());
-	        	player.sendMessage(ChatColor.GREEN + "You were removed from hidden hash");
-	        }
-	        else{
-	            for (Player looking : server.getOnlinePlayers()){
-	                if (!looking.canSee(player)) looking.showPlayer(player);
-           }
-       }
-	} */
-	/*public void distCheck(Player player) {
-		for (Player other : Bukkit.getServer().getOnlinePlayers()) {
-			if (other.getLocation().distance(player.getLocation()) <= 7) {
-        		show(player);
-        	player.sendMessage(ChatColor.YELLOW + "Distance too close...no longer hidden");
-        	}
-        	else {
-        	}
-		}
-		return;
-	} */
 }
