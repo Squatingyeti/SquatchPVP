@@ -12,12 +12,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import ru.tehkode.permissions.PermissionManager;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class SquatchCommands implements CommandExecutor {
 	public static Permission permission;
+	public final SquatchPVP plugin;
+	
+	public SquatchCommands(SquatchPVP plugin) {
+		this.plugin = plugin;
+	}
 	
 	 private static enum Action { HELP, HUNTERS, SPIRIT, KDR, RANK, SNEAK, TOP, RESET }
 	    static String command;
@@ -38,9 +40,8 @@ public class SquatchCommands implements CommandExecutor {
 	            return true;
 	        
 	        Player player = (Player)sender;
-	        PermissionManager pexPlayer = PermissionsEx.getPermissionManager();
-			PermissionUser pPlayer = pexPlayer.getUser(player);
-	        //Display the help page if the Player did not add any arguments
+	       
+	        // Display the help page if the Player did not add any arguments
 	        if (args.length == 0) {
 	            sendHelp(player);
 	            return true;
@@ -98,8 +99,8 @@ public class SquatchCommands implements CommandExecutor {
 	            		else if (Econ.takeMoney(pName, sneakFee) == true) {
 	            			player.sendMessage("player is" + pName);
 	            			player.sendMessage(+ sneakFee + " removed from your account");
-	            			pPlayer.addPermission("squatchpvp.sneak");
 	            			player.sendMessage(ChatColor.GREEN + "sneak permission added");
+	            			SquatchPVPListener.sneakState.put(player, false);
 	            			return true;
 	            			
 	            		}
@@ -274,7 +275,8 @@ public class SquatchCommands implements CommandExecutor {
 	* @param name The name of the Ratio, 'all' to specify all Ratios,
 	* or null to specify the ratio of the given player
 	*/
-	    private static void reset(Player player, boolean kdr, String name) {
+
+		private static void reset(Player player, boolean kdr, String name) {
 	        //Cancel if the Player does not have the proper permissions
 	        if (!SquatchPVP.hasPermission(player, "reset")) {
 	            player.sendMessage("You do not have permission to do that.");
@@ -290,13 +292,12 @@ public class SquatchCommands implements CommandExecutor {
 	                }
 	            else { //Reset a specified Ratio
 	                //Use the Ratio of the given Player if name is null
-	                if (name == null)
-	                    name = player.getName();
+	                if (name == null) name = player.getName();
 	                
 	                //Return if the Ratio does not exist
 	                Ratio ratio = SquatchPVP.findRatio(name);
 	                if (ratio == null) {
-	                    player.sendMessage("No PvP Ratio found for "+name);
+	                    player.sendMessage("No PvP Ratio found for " + name);
 	                    return;
 	                }
 	                
@@ -311,13 +312,12 @@ public class SquatchCommands implements CommandExecutor {
 	                        ratio.decrementSpirit(player);
 	            else { //Reset a specified Ratio
 	                //Use the Ratio of the given Player if name is null
-	                if (name == null)
-	                    name = player.getName();
+	                if (name == null) name = player.getName();
 	                
 	                //Return if the Ratio does not exist
 	                Ratio ratio = SquatchPVP.findRatio(name);
 	                if (ratio == null) {
-	                    player.sendMessage("No PvP Ratio found for "+name);
+	                    player.sendMessage("No PvP Ratio found for " + name);
 	                    return;
 	                }
 	                

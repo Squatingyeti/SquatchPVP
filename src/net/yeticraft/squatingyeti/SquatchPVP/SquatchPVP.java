@@ -26,7 +26,7 @@ public class SquatchPVP extends JavaPlugin {
 	public static Properties p;
 	public static HashMap<String, Ratio> ratios = new HashMap<String, Ratio>();
 	public static String dataFolder;
-
+	public SquatchPVPListener myListener;
 	
 	public void onDisable() {
 		log.info("[SquatchPVP] has been disabled");
@@ -36,7 +36,6 @@ public class SquatchPVP extends JavaPlugin {
 	public void onEnable() {
   
 		server = getServer();
-		pm = server.getPluginManager();
 		
 		File dir = this.getDataFolder();
 		if (!dir.isDirectory());
@@ -59,10 +58,10 @@ public class SquatchPVP extends JavaPlugin {
 		
 		loadData();
 		
-		pm.registerEvents(new SquatchPVPListener(), this);
+		myListener = new SquatchPVPListener(this);
 		
 		SquatchCommands.command = (String)this.getDescription().getCommands().keySet().toArray()[0];
-        getCommand(SquatchCommands.command).setExecutor(new SquatchCommands());
+        getCommand(SquatchCommands.command).setExecutor(new SquatchCommands(this));
 
 		log.info("[SquatchPVP] is enabled");
 		
@@ -272,7 +271,7 @@ public class SquatchPVP extends JavaPlugin {
 	}
 
 	public static LinkedList<Ratio> getRatios() {
-		LinkedList<Ratio> ratioList = new LinkedList(ratios.values());
+		LinkedList<Ratio> ratioList = new LinkedList<Ratio>(ratios.values());
 		Collections.sort(ratioList);
 		return ratioList;
 	}
