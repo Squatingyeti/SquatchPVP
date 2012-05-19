@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -106,7 +107,7 @@ public class SquatchPVPListener implements Listener {
 			return;
 		}
 		
-		// Checking to see if they are too close to someone. (Only returns if someone is close.) 
+		// Checking to see if they are too close to someone while hidden. (Only returns if someone is close.) 
 		if (player.isSneaking()){
 			
 			for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers()) {
@@ -123,7 +124,6 @@ public class SquatchPVPListener implements Listener {
 			}
 			
 		}
-
 		
 		// hide state true : sneaking false (update hiddenState to false and show player) 
 		if (hiddenState.get(player) && !player.isSneaking()){
@@ -152,6 +152,7 @@ public class SquatchPVPListener implements Listener {
 			toggleHideState(player);
 			hiddenTimer.remove(player);
 			hiddenState.remove(player);
+			player.sendMessage(ChatColor.GREEN + "You are no longer hiding.");
 			return;
 		}
 		

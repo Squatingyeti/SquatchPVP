@@ -99,9 +99,10 @@ public class SquatchCommands implements CommandExecutor {
 	            		else if (Econ.takeMoney(pName, sneakFee) == true) {
 	            			player.sendMessage("player is" + pName);
 	            			player.sendMessage(+ sneakFee + " removed from your account");
-	            			player.sendMessage(ChatColor.GREEN + "sneak permission added");
+	            			player.sendMessage(ChatColor.GREEN + "You are now eligible for hiding.");
 	            			SquatchPVPListener.hiddenState.put(player, false);
 	            			SquatchPVPListener.hiddenTimer.remove(player);
+	            			
 	            			return true;
 	            			
 	            		}
