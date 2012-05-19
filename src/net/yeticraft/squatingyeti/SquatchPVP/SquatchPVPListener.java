@@ -21,8 +21,8 @@ public class SquatchPVPListener implements Listener {
 	public static LinkedList<String> feeDisabledIn;
 	public static long sneakTimeOut;
 	boolean timeoutReached = false;
-	public static HashMap<Player, Long> sneakTimer = new HashMap<Player, Long>();
-	public static HashMap<Player, Boolean> sneakState = new HashMap<Player, Boolean>();
+	public static HashMap<Player, Long> hiddenTimer = new HashMap<Player, Long>();
+	public static HashMap<Player, Boolean> hiddenState = new HashMap<Player, Boolean>();
 	public static SquatchPVP plugin;
     
 	public SquatchPVPListener(SquatchPVP plugin) {
@@ -82,11 +82,11 @@ public class SquatchPVPListener implements Listener {
 		Player player = e.getPlayer();
 		
 		// Iterating through hidden players and hiding them from newly logged on player
-		Iterator<Player> it = sneakState.keySet().iterator();
+		Iterator<Player> it = hiddenState.keySet().iterator();
 		while (it.hasNext())
 		{
 		   Player hiddenPlayer = it.next();
-		   if (sneakState.get(hiddenPlayer)){
+		   if (hiddenState.get(hiddenPlayer)){
 			   player.hidePlayer(hiddenPlayer);
 		   }
 		}
@@ -99,10 +99,10 @@ public class SquatchPVPListener implements Listener {
 		Player player = event.getPlayer();
 		
 		// Player not sneak capable.. return out
-		if (!sneakState.containsKey(player)) return; 
+		if (!hiddenState.containsKey(player)) return; 
 		
 		// Hide state false : sneaking false (return, nothing to do) 
-		if (!sneakState.get(player) && !player.isSneaking()){
+		if (!hiddenState.get(player) && !player.isSneaking()){
 			return;
 		}
 		
@@ -116,7 +116,7 @@ public class SquatchPVPListener implements Listener {
 
 				// Show player if they are less than 7
 				if (onlinePlayer.getLocation().distance(player.getLocation()) <= 7){
-					sneakState.put(player, false);
+					hiddenState.put(player, false);
 					toggleHideState(player);
 					return;
 				}
@@ -125,33 +125,33 @@ public class SquatchPVPListener implements Listener {
 		}
 
 		
-		// hide state true : sneaking false (update sneakState to false and show player) 
-		if (sneakState.get(player) && !player.isSneaking()){
-			sneakState.put(player, false);
+		// hide state true : sneaking false (update hiddenState to false and show player) 
+		if (hiddenState.get(player) && !player.isSneaking()){
+			hiddenState.put(player, false);
 			toggleHideState(player);
 			return;
 		}
 
-		// Hide state false : sneaking true (update sneakState to true and hide player) 
-		if (!sneakState.get(player) && player.isSneaking()){
+		// Hide state false : sneaking true (update hiddenState to true and hide player) 
+		if (!hiddenState.get(player) && player.isSneaking()){
 			// add them to the sneak timer if they don't already have an entry
-			if (!sneakTimer.containsKey(player)){
-				sneakTimer.put(player, System.currentTimeMillis());
+			if (!hiddenTimer.containsKey(player)){
+				hiddenTimer.put(player, System.currentTimeMillis());
 			}
 			
-			sneakState.put(player, true);
+			hiddenState.put(player, true);
 			toggleHideState(player);
 			return;
 			
 		}
 
 		// Hide state true: sneaking true (Check to see if their timer is up)
-		long elapsedTime = System.currentTimeMillis() - sneakTimer.get(player);
+		long elapsedTime = System.currentTimeMillis() - hiddenTimer.get(player);
 		if (elapsedTime > 20000){
-			sneakState.put(player, false);
+			hiddenState.put(player, false);
 			toggleHideState(player);
-			sneakTimer.remove(player);
-			sneakState.remove(player);
+			hiddenTimer.remove(player);
+			hiddenState.remove(player);
 			return;
 		}
 		
@@ -173,7 +173,7 @@ public class SquatchPVPListener implements Listener {
 			if (onlinePlayer.equals(player)) continue; 
 			
 			// Hiding or showing based on entry in the hashmap
-			if (sneakState.get(player)) onlinePlayer.hidePlayer(player);
+			if (hiddenState.get(player)) onlinePlayer.hidePlayer(player);
 			else onlinePlayer.showPlayer(player);
 			
 		}
