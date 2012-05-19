@@ -101,6 +101,7 @@ public class SquatchCommands implements CommandExecutor {
 	            			player.sendMessage(+ sneakFee + " removed from your account");
 	            			player.sendMessage(ChatColor.GREEN + "sneak permission added");
 	            			SquatchPVPListener.sneakState.put(player, false);
+	            			SquatchPVPListener.sneakTimer.remove(player);
 	            			return true;
 	            			
 	            		}

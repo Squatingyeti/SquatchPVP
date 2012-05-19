@@ -106,6 +106,25 @@ public class SquatchPVPListener implements Listener {
 			return;
 		}
 		
+		// Checking to see if they are too close to someone. (Only returns if someone is close.) 
+		if (player.isSneaking()){
+			
+			for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers()) {
+				
+				// Skip the player
+				if (onlinePlayer.equals(player)) continue; 
+
+				// Show player if they are less than 7
+				if (onlinePlayer.getLocation().distance(player.getLocation()) <= 7){
+					sneakState.put(player, false);
+					toggleHideState(player);
+					return;
+				}
+			}
+			
+		}
+
+		
 		// hide state true : sneaking false (update sneakState to false and show player) 
 		if (sneakState.get(player) && !player.isSneaking()){
 			sneakState.put(player, false);
@@ -119,33 +138,21 @@ public class SquatchPVPListener implements Listener {
 			if (!sneakTimer.containsKey(player)){
 				sneakTimer.put(player, System.currentTimeMillis());
 			}
+			
 			sneakState.put(player, true);
 			toggleHideState(player);
 			return;
+			
 		}
 
 		// Hide state true: sneaking true (Check to see if their timer is up)
 		long elapsedTime = System.currentTimeMillis() - sneakTimer.get(player);
-		if (elapsedTime > 45000){
+		if (elapsedTime > 20000){
 			sneakState.put(player, false);
 			toggleHideState(player);
 			sneakTimer.remove(player);
 			sneakState.remove(player);
 			return;
-		}
-		
-		// Player is within their sneak time, checking to see if they are too close.
-		for (Player onlinePlayer : Bukkit.getServer().getOnlinePlayers()) {
-		
-			// Skip the player
-			if (onlinePlayer.equals(player)) continue; 
-
-			// Show player if they are less than 7
-			if (onlinePlayer.getLocation().distance(player.getLocation()) <= 7){
-				sneakState.put(player, false);
-				toggleHideState(player);
-				break;
-			}
 		}
 		
 		return;
