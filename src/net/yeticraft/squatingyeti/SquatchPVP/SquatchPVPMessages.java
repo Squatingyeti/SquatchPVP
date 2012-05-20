@@ -11,7 +11,6 @@ public class SquatchPVPMessages {
 	private static String spiritDecreased;
 	private static String spiritIncreased;
 	private static String spiritNoChange;
-	private static String sneak;
 	private static String deathFee;
 	
 	
@@ -53,10 +52,6 @@ public class SquatchPVPMessages {
     
     public static void setDeathFeeMsg(String msg) {
         deathFee = format(msg);
-    }
-    
-    public static void sneakMsg(String msg) {
-    	sneak = format(msg);
     }
     
     public static String getVictimMsg(double amount, String killed, String killer, String spirit) {

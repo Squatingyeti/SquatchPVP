@@ -278,6 +278,7 @@ public class SquatchCommands implements CommandExecutor {
 	* or null to specify the ratio of the given player
 	*/
 
+		@SuppressWarnings("unused")
 		private static void reset(Player player, boolean kdr, String name) {
 	        //Cancel if the Player does not have the proper permissions
 	        if (!SquatchPVP.hasPermission(player, "reset")) {

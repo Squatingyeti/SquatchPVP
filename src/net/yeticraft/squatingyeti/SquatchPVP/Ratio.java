@@ -111,7 +111,8 @@ public class Ratio implements Comparable<Ratio> {
     	inCombatWith = player;
     	
     	Thread combat = new Thread() {
-    		@Override
+    		@SuppressWarnings("static-access")
+			@Override
     		public void run() {
     			try {
     				
